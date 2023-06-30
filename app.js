@@ -1,5 +1,9 @@
+const cards = document.getElementById('cards');
 const items = document.getElementById('items');
+const footer = document.getElementById('footer');
 const templateCard = document.getElementById('template__card').content;
+const tempateFooter = document.getElementById('template__footer').content;
+const templateCarrito = document.getElementById('template__carrito').content;
 const fragment = document.createDocumentFragment();
 let carrito = {};
 
@@ -7,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchData();
 });
 
-items.addEventListener('click', e => { addCarrito(e); })
+cards.addEventListener('click', e => { addCarrito(e); })
 
 const fetchData = async () => {
     try {
@@ -21,17 +25,17 @@ const fetchData = async () => {
 }
 
 const pintarCards = (data) => {
-    console.log(data);
+    //console.log(data);
     data.forEach(producto => {
         templateCard.querySelector('h5').textContent = producto.title;
         templateCard.querySelector('p').textContent = producto.precio;
         templateCard.querySelector('img').setAttribute('src', producto.thumbnailUrl);
-        templateCard.querySelector('.btn').dataset.id = producto.id;
+        templateCard.querySelector('.btn-dark').dataset.id = producto.id;
 
         const clone = templateCard.cloneNode(true);
         fragment.appendChild(clone);
     });
-    items.appendChild(fragment);
+    cards.appendChild(fragment);
 };
 
 const addCarrito = (e) => {
@@ -44,7 +48,7 @@ const addCarrito = (e) => {
 }
 
 const setCarrito = objeto => {
-    console.log(objeto);
+    //console.log(objeto);
     const producto = {
         id: objeto.querySelector('.btn').dataset.id,
         title: objeto.querySelector('h5').textContent,
@@ -57,6 +61,47 @@ const setCarrito = objeto => {
     }
 
     carrito[producto.id] = { ...producto };
-
-    console.log(producto);
+    pintarCarrito();
+    //console.log(producto);
 }
+
+const pintarCarrito = () => {
+    // console.log(carrito);
+    items.innerHTML = '';
+    Object.values(carrito).forEach(producto => {
+        templateCarrito.querySelector('th').textContent = producto.id;
+        templateCarrito.querySelectorAll('td')[0].textContent = producto.title;
+        templateCarrito.querySelectorAll('td')[1].textContent = producto.cantidad;
+        templateCarrito.querySelector('.btn-info').dataset.id = producto.id;
+        templateCarrito.querySelector('.btn-danger').dataset.id = producto.id;
+        templateCarrito.querySelector('span').textContent = producto.cantidad * producto.precio;
+
+        const clone = templateCarrito.cloneNode(true);
+        fragment.appendChild(clone);
+    });
+    items.appendChild(fragment);
+
+    pintarFooter();
+}
+
+const pintarFooter = () => {
+    footer.innerHTML = '';
+    if (Object.keys(carrito).length === 0) {
+        footer.innerHTML = `
+        <th scope='row' colspan'5'>Carrito vacío - comience a comprar!</th>
+        `
+    }
+
+    const nCantidades = Object.values(carrito).reduce((acc, { cantidad }) => acc + cantidad, 0);
+    const nPrecio = Object.values(carrito).reduce((acc, { cantidad, precio }) => acc + cantidad * precio, 0);
+    // console.log(nPrecio);
+
+    tempateFooter.querySelectorAll('th')[0].textContent = nCantidades;
+    tempateFooter.querySelector('span').textContent = nPrecio;
+
+    const clone = tempateFooter.cloneNode(true);
+    fragment.append(clone);
+    footer.append(fragment);
+
+    const
+};
