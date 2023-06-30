@@ -1,12 +1,12 @@
 const items = document.getElementById('items');
-const templateCard = document.getElementById('template__card');
+const templateCard = document.getElementById('template__card').content;
 const fragment = document.createDocumentFragment();
 
 document.addEventListener('DOMContentLoaded', () => {
-    fetcData()
-})
+    fetchData();
+});
 
-const fetcData = async () => {
+const fetchData = async () => {
     try {
         const res = await fetch('api.json');
         const data = await res.json();
@@ -18,8 +18,13 @@ const fetcData = async () => {
 }
 
 const pintarCards = (data) => {
+    console.log(data);
     data.forEach(producto => {
         templateCard.querySelector('h5').textContent = producto.title;
+        templateCard.querySelector('p').textContent = producto.precio;
+        templateCard.querySelector('img').setAttribute('src', producto.thumbnailUrl);
+        templateCard.querySelector('.btn').dataset.id = producto.id;
+
         const clone = templateCard.cloneNode(true);
         fragment.appendChild(clone);
     });
